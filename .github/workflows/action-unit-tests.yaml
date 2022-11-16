@@ -6,6 +6,9 @@ on:
       - "content/pkg/deps/python/**"
     branches:
       - main
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
 jobs:
   test-python-layer-common:
     permissions:
