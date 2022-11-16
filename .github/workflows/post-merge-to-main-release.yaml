@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
 jobs:
   update_release_draft:
     permissions:
@@ -13,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Drafts your next Release notes as Pull Requests are merged into "main"
-      - uses: release-drafter/release-drafter@v5
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+      - uses: release-drafter/release-drafter@6df64e4ba4842c203c604c1f45246c5863410adb # v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
