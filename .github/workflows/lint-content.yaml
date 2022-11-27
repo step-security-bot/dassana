@@ -5,6 +5,9 @@ on:
       - "content/**"
     branches:
       - main
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
 jobs:
   validate-content-dir-and-file-structure:
     permissions:
