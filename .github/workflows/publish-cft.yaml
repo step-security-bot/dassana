@@ -6,25 +6,30 @@ jobs:
   build-test-and-publish-cft:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ebacdc22ef6c2cfb85ee5ded8f2e640f4c776dd5 # v2.0.0
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - name: Checkout
-        uses: actions/checkout@v2.3.1
+        uses: actions/checkout@28c7f3d2b5162b5ddd3dfd9a45aa55eaf396478b # v2.3.1
         with:
           ref: ${{ github.event.inputs.GIT_TAG }}
           persist-credentials: false
       - name: Set tag env var
         run: echo "GIT_TAG=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@f0bb91606209742fe3ea40199be2f3ef195ecabf # v2.5.0
         with:
           distribution: "adopt"
           java-version: "11"
       - name: Configure AWS Credentials for Dassana Prod
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-      - uses: aws-actions/setup-sam@v1
-      - uses: actions/setup-python@v2
+      - uses: aws-actions/setup-sam@0578b2f57e540e67233c3ce0c5477ee36938ff3d # v1
+      - uses: actions/setup-python@75f3110429a8c05be0e1bf360334e4cced2b63fa # v2.3.3
         with:
           python-version: "3.7"
       - name: Pack it up!
@@ -42,20 +47,20 @@ jobs:
           ts=`date +%s`
           sed -i "s/ApiGatewayDeployment42/ApiGatewayDeployment$ts/g" uploaded-template.yaml
       - name: Configure AWS credentials for QA environment
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
         with:
           aws-access-key-id: ${{ secrets.QA_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.QA_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.QA_REGION }}
       - name: Deploy built CFT to QA environment
-        uses: aws-actions/aws-cloudformation-github-deploy@v1.0.4
+        uses: aws-actions/aws-cloudformation-github-deploy@a4dc90cda3c9eb7c34b2b5eda5594d06384d80a6 # v1.0.4
         with:
           name: Dassana
           template: content/pkg/uploaded-template.yaml
           capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_IAM,CAPABILITY_AUTO_EXPAND
           no-fail-on-empty-changeset: "1"       
       - name: Install Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e # v1.4.6
         with: 
           node-version: '12.x'
       - name: Install newman
@@ -71,7 +76,7 @@ jobs:
         run: |
           newman run engine/api/api.postman_collection.json -e engine/api/env.postman_environment.json --env-var dassana-api-key=${{ secrets.QA_API_KEY }} --env-var api-gateway-url=${{ secrets.QA_API_GATEWAY_URL }} -r junit,htmlextra --reporter-junit-export junitReport/junit.xml > junitReport/junit.xml --reporter-htmlextra-export htmlReport/report.html > htmlReport/report.html --reporter-htmlextra-skipHeaders "x-api-key"
       - name: Configure AWS Credentials for Dassana Prod
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838 # v1.7.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -83,7 +88,7 @@ jobs:
           cd content/pkg
           aws s3 cp uploaded-template.yaml s3://${{ secrets.SAM_ARTIFACTS_BUCKET }}/$tag/cft.yaml 
       - name: JUnit UI Status
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@c9b3d0e2bd2a4e96aaf424dbaa31c46b42318226 # v1.6.0
         if: always()
         with:
           name: Junit UI
@@ -91,13 +96,13 @@ jobs:
           reporter: java-junit
       - name: Upload JUnit files
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
         with: 
           name: JUnit Report
           path: junitReport
       - name: Upload HTML report
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@82c141cc518b40d92cc801eee768e7aafc9c2fa2 # v2.3.1
         with: 
           name: HTML Report
           path: htmlReport/*.html
