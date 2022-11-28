@@ -1,0 +1,81 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /content/actions/checkov-cft-normalizer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/decorate-ip
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/get-bucket-policy
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/get-bucket-stats
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/get-iam-policy-risks
+    schedule:
+      interval: daily
+
+  - package-ecosystem: maven
+    directory: /content/actions/get-tags
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/normalizer-lookup
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/prisma-cloud-normalizer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: maven
+    directory: /content/actions/securityhub-update-finding
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/website-context
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/what-enis-are-attached-to-sg
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/what-is-ec2-role
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/actions/what-is-exposure-of-ec2-instance
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /content/pkg/deps/python
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /docs-root
+    schedule:
+      interval: daily
+
+  - package-ecosystem: maven
+    directory: /engine
+    schedule:
+      interval: daily
