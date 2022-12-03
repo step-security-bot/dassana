@@ -6,12 +6,20 @@ on:
       - "content/pkg/deps/python/**"
     branches:
       - main
+permissions:  # added using https://github.com/step-security/secure-workflows
+  contents: read
+
 jobs:
   test-python-layer-common:
     permissions:
       contents: read
     runs-on: ubuntu-18.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
